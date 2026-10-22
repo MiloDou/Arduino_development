@@ -1,0 +1,3 @@
+atraves de express hace la aplicación web
+con socket io, lo ponemos en modo escucha para el servidor 
+

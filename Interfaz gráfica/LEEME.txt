@@ -1,0 +1,21 @@
+NEON//LINK + ARDUINO + JOHNNY-FIVE
+
+Qué hace
+- ENCENDER/APAGAR controla el LED integrado (pin 13 por defecto).
+- ENVIAR manda el texto de la página al servidor Node.js; se imprime en la terminal.
+- Para presentar el texto en una pantalla física falta conocer el modelo (por ejemplo LCD 16x2 I2C u OLED) y su conexión.
+
+Preparación
+1. Instala Node.js LTS.
+2. Abre una terminal en esta carpeta y ejecuta: npm install
+3. Conecta el Arduino por USB y carga StandardFirmata desde Arduino IDE:
+   Archivo > Ejemplos > Firmata > StandardFirmata
+4. Ejecuta: npm start
+5. Abre http://localhost:3000 en el navegador.
+
+Si Johnny-Five no detecta el puerto automáticamente, define el puerto antes de iniciar:
+  Linux:   ARDUINO_PORT=/dev/ttyACM0 npm start
+  Windows PowerShell: $env:ARDUINO_PORT="COM3"; npm start
+
+El LED integrado suele estar en el pin 13. Si tu placa usa otro pin LED, inicia con:
+  LED_PIN=NUMERO_DEL_PIN npm start

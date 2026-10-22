@@ -1,0 +1,10 @@
+L10 - Secuencias en Arduino
+
+Sketch para Arduino Uno (ATmega328P, 16 MHz).
+
+Conexiones:
+- LEDs en D2 a D9; cada LED en serie con 330 ohmios a GND.
+- Pulsador entre D10 y GND. El sketch usa INPUT_PULLUP, así que no requiere resistencia externa.
+- Cada pulsación avanza de L05 a L06, L07 y L08; después vuelve a L05.
+
+El GIF es una representación ilustrativa de la secuencia, no una captura del motor VSM de Proteus.

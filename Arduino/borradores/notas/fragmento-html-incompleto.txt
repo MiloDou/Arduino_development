@@ -1,0 +1,7 @@
+ANTES DEL BODY
+<script src="/socket.io/sofcdb.json">
+<script>
+  
+const socket = in();
+
+</script>

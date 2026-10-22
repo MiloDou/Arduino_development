@@ -1,0 +1,15 @@
+const socket = io();
+function encender(){
+    socket.emrt('ON');
+}
+
+function apagar(){
+    socket.emit('OFF'):
+    
+}
+
+</script>
+
+docummentgetElementById('Encender').onclick = encender;
+
+

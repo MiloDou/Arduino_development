@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050905">
+  <title>NEON//LINK — Interfaz Arduino</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --void: #050905;
+      --surface: #0b1009;
+      --surface-raised: #10180d;
+      --phosphor: #a8ff58;
+      --phosphor-bright: #d9ff88;
+      --phosphor-dim: #79bf3e;
+      --ink: #081006;
+      --muted: #a2b58e;
+      --line: #43682d;
+      --error: #ff9b72;
+      --focus: #e5ffb2;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--void); }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: clamp(18px, 4vw, 44px) 18px;
+      display: grid;
+      place-items: start center;
+      color: var(--phosphor);
+      font: 14px/1.55 "Courier New", Courier, monospace;
+      background:
+        radial-gradient(ellipse at 50% 5%, #18240f 0, transparent 58%),
+        repeating-linear-gradient(0deg, #a8ff5809 0 1px, transparent 1px 4px),
+        var(--void);
+    }
+    ::selection { color: var(--ink); background: var(--phosphor); }
+    .shell { width: min(100%, 700px); }
+    header {
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding: 0 5px 9px;
+      border-bottom: 1px dashed var(--line);
+      font-size: 12px;
+      letter-spacing: .075em;
+    }
+    .brand { color: var(--phosphor-bright); font-weight: 700; }
+    .brand b { color: var(--phosphor); font-weight: 700; }
+    .brand span { color: var(--muted); font-weight: 400; }
+    .connection { max-width: 48%; color: var(--muted); text-align: right; font-size: 12px; }
+    .connection::before { content:""; display:inline-block; width:8px; height:8px; margin-right:8px; border-radius:50%; background:var(--error); vertical-align:1px; }
+    .connection.online::before { background:var(--phosphor); }
+    .panel { border:1px solid var(--line); background:var(--surface); padding:clamp(16px, 4vw, 30px); }
+    h1 { margin:0 0 6px; color:var(--phosphor-bright); font-size:clamp(25px, 6vw, 38px); line-height:1.12; letter-spacing:-.055em; font-weight:700; }
+    .intro { max-width:58ch; margin:0 0 22px; color:var(--muted); font-size:13px; }
+    .eye-frame { position:relative; margin:0 0 22px; overflow:hidden; border:1px solid var(--line); background:#17240d; }
+    .eye-frame svg { display:block; width:100%; height:auto; aspect-ratio: 2.05 / 1; }
+    .eye-frame figcaption { position:absolute; right:8px; bottom:8px; padding:3px 6px; background:var(--phosphor-bright); color:var(--ink); font-size:12px; font-weight:bold; letter-spacing:.08em; }
+    .scanline { height:7px; margin:0 0 21px; background:var(--phosphor-bright); }
+    .section-label { display:block; margin:0 0 9px; color:var(--phosphor-bright); font-size:11px; letter-spacing:.12em; text-transform:uppercase; }
+    .power-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    button { min-height:48px; padding:10px 14px; border:1px solid var(--line); border-radius:0; background:var(--surface-raised); color:var(--phosphor-bright); font-family:inherit; font-size:12px; font-weight:700; line-height:1.3; letter-spacing:.08em; cursor:pointer; transition:background .15s ease, color .15s ease, border-color .15s ease; }
+    button:hover:not(:disabled) { border-color:var(--phosphor); background:#182511; }
+    button:focus-visible, textarea:focus-visible { outline:2px solid var(--focus); outline-offset:3px; }
+    button:disabled { opacity:.5; cursor:not-allowed; }
+    .state { display:flex; justify-content:space-between; align-items:center; gap:14px; margin:12px 0 24px; padding:10px 12px; border:1px solid #26391c; background:#080d07; color:var(--muted); font-size:11px; }
+    .state strong { color:var(--phosphor-bright); font-weight:700; letter-spacing:.12em; }
+    .state.active { border-color:var(--phosphor-dim); }
+    .state.active strong { color:var(--phosphor); }
+    .compose { display:flex; align-items:stretch; gap:9px; }
+    textarea { flex:1; min-width:0; min-height:88px; resize:vertical; padding:12px; border:1px solid var(--line); border-radius:0; background:#070b06; color:var(--phosphor-bright); font-family:inherit; font-size:13px; line-height:1.5; }
+    textarea::placeholder { color:#91a580; opacity:1; }
+    #enviar { min-width:126px; border-color:var(--phosphor); background:var(--phosphor); color:var(--ink); }
+    #enviar:hover:not(:disabled) { background:var(--phosphor-bright); }
+    .hint { display:flex; justify-content:space-between; gap:12px; margin-top:7px; color:var(--muted); font-size:12px; }
+    .log { margin-top:22px; padding-top:14px; border-top:1px dashed var(--line); }
+    .log-head { display:flex; justify-content:space-between; gap:12px; color:var(--muted); font-size:12px; letter-spacing:.12em; }
+    #registro { min-height:23px; margin:9px 0 0; color:var(--phosphor-bright); font-size:12px; overflow-wrap:anywhere; }
+    footer { margin-top:13px; color:var(--muted); font-size:12px; letter-spacing:.1em; text-align:left; }
+    @media(max-width:520px) {
+      body { padding:18px 12px; }
+      header { align-items:flex-start; flex-direction:column; }
+      .connection { max-width:100%; text-align:left; }
+      .compose { flex-direction:column; }
+      #enviar { min-height:48px; }
+      .eye-frame svg { aspect-ratio:1.65 / 1; }
+    }
+    @media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none !important; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="brand">NEON<b>//</b>LINK <span>· CONSOLA ARDUINO</span></div>
+      <div class="connection" id="conexion">ESPERANDO SERVIDOR</div>
+    </header>
+    <section class="panel" aria-labelledby="titulo">
+      <h1 id="titulo">Consola de señal</h1>
+      <p class="intro">Control local del dispositivo. Envía comandos y monitorea el estado de la conexión.</p>
+
+      <figure class="eye-frame" aria-label="Ilustración de un ojo en semitono verde, símbolo de vigilancia digital">
+        <svg viewBox="0 0 820 400" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="field" x2="0" y2="1"><stop stop-color="#27451a"/><stop offset="1" stop-color="#baff68"/></linearGradient>
+            <radialGradient id="iris"><stop stop-color="#091006"/><stop offset=".45" stop-color="#172b10"/><stop offset=".72" stop-color="#72ae35"/><stop offset="1" stop-color="#d4ff88"/></radialGradient>
+            <pattern id="dots" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.35" fill="#0a1207" opacity=".76"/></pattern>
+            <pattern id="fine" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 3.5H4" stroke="#d9ff88" stroke-opacity=".14"/></pattern>
+            <clipPath id="eyeShape"><path d="M45 205Q205 48 411 72Q631 95 775 205Q615 344 412 328Q190 312 45 205Z"/></clipPath>
+          </defs>
+          <rect width="820" height="400" fill="url(#field)"/>
+          <path d="M0 0H820V400H0Z" fill="url(#fine)"/>
+          <g clip-path="url(#eyeShape)">
+            <rect x="35" y="55" width="750" height="300" fill="#c7ff7a"/>
+            <ellipse cx="410" cy="202" rx="112" ry="124" fill="url(#iris)"/>
+            <ellipse cx="410" cy="202" rx="43" ry="57" fill="#060a05"/>
+            <ellipse cx="381" cy="167" rx="18" ry="10" fill="#eaffbd" opacity=".9"/>
+            <path d="M40 208Q205 52 411 72Q631 95 780 205" fill="none" stroke="#091006" stroke-width="22"/>
+            <path d="M41 209Q211 334 412 328Q617 323 779 205" fill="none" stroke="#527d2e" stroke-width="9"/>
+            <rect x="30" y="55" width="760" height="300" fill="url(#dots)" opacity=".65"/>
+          </g>
+          <path d="M26 35H794M26 366H794" stroke="#baff68" stroke-opacity=".45" stroke-dasharray="3 7"/>
+          <g fill="#d9ff88" opacity=".85"><circle cx="30" cy="35" r="4"/><circle cx="790" cy="366" r="4"/></g>
+        </svg>
+        <figcaption>SEÑAL LOCAL // MONITOREO</figcaption>
+      </figure>
+      <div class="scanline" aria-hidden="true"></div>
+
+      <p class="section-label">Control de alimentación</p>
+      <div class="power-row">
+        <button class="power on" id="encender" type="button" disabled>ENCENDER</button>
+        <button class="power off" id="apagar" type="button" disabled>APAGAR</button>
+      </div>
+      <div class="state" id="estado" role="status" aria-live="polite">
+        <span>ESTADO DEL SISTEMA</span><strong id="estadoTexto">EN ESPERA</strong>
+      </div>
+
+      <form id="formulario">
+        <label class="section-label" for="mensaje">Mensaje de transmisión</label>
+        <div class="compose">
+          <textarea id="mensaje" name="mensaje" maxlength="240" placeholder="Escribe un mensaje para enviar…" required></textarea>
+          <button id="enviar" type="submit">ENVIAR →</button>
+        </div>
+        <div class="hint"><span>Máximo 240 caracteres</span><span id="contador">0 / 240</span></div>
+      </form>
+
+      <div class="log" aria-live="polite">
+        <div class="log-head"><span>REGISTRO DE ACTIVIDAD</span><span>● SOCKET.IO</span></div>
+        <p id="registro">&gt; Consola inicializada. Esperando comando…</p>
+      </div>
+    </section>
+    <footer>NEON//LINK — CONTROL LOCAL · EXPRESS / SOCKET.IO</footer>
+  </main>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const estado = document.querySelector('#estado');
+    const estadoTexto = document.querySelector('#estadoTexto');
+    const registro = document.querySelector('#registro');
+    const conexion = document.querySelector('#conexion');
+    const mensaje = document.querySelector('#mensaje');
+    const contador = document.querySelector('#contador');
+
+    socket.on('connect', () => { conexion.textContent = 'CONECTANDO CON ARDUINO…'; });
+    socket.on('board-status', ({ ready, message }) => {
+      conexion.textContent = ready ? 'ARDUINO CONECTADO' : message;
+      conexion.classList.toggle('online', ready);
+      document.querySelector('#encender').disabled = !ready;
+      document.querySelector('#apagar').disabled = !ready;
+      registro.textContent = `> ${message}`;
+    });
+    socket.on('board-state', (encendido) => {
+      estado.classList.toggle('active', encendido);
+      estadoTexto.textContent = encendido ? 'ACTIVO' : 'APAGADO';
+    });
+    socket.on('message-result', ({ ok, message }) => {
+      registro.textContent = `> ${message}`;
+      if (ok) { mensaje.value = ''; contador.textContent = '0 / 240'; }
+    });
+    socket.on('disconnect', () => {
+      conexion.textContent = 'SERVIDOR DESCONECTADO';
+      conexion.classList.remove('online');
+    });
+
+    document.querySelector('#encender').addEventListener('click', () => socket.emit('power', true));
+    document.querySelector('#apagar').addEventListener('click', () => socket.emit('power', false));
+    mensaje.addEventListener('input', () => { contador.textContent = `${mensaje.value.length} / 240`; });
+    document.querySelector('#formulario').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const texto = mensaje.value.trim();
+      if (!texto) { mensaje.focus(); return; }
+      socket.emit('send-message', texto);
+    });
+  </script>
+</body>
+</html>

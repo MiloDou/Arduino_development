@@ -1,0 +1,17 @@
+{
+  "name": "arduino-johnny-five-examples",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Experimentos básicos de Johnny-Five para controlar el LED integrado de Arduino.",
+  "main": "blink.js",
+  "scripts": {
+    "blink": "node blink.js",
+    "led": "node led.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "johnny-five": "^2.1.0"
+  }
+}

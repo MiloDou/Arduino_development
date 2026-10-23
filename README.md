@@ -47,7 +47,7 @@ npm install
 npm start
 ```
 
-Abre <http://localhost:3000> en el navegador. La interfaz controla el LED integrado del pin 13 por defecto. El campo de mensaje envía el texto al servidor y lo imprime en la terminal; para mostrarlo en un LCD u OLED habría que añadir y cablear ese modelo de pantalla.
+Abre <http://127.0.0.1:8081> en el navegador. La interfaz controla el LED integrado del pin 13 por defecto. El campo de mensaje envía el texto al servidor y lo imprime en la terminal; para mostrarlo en un LCD u OLED habría que añadir y cablear ese modelo de pantalla. El servidor acepta los eventos `power` de la interfaz y también `Encender`/`Apagar` del ejemplo original.
 
 Johnny-Five intenta encontrar el puerto serial automáticamente. Si no detecta la placa, inicia el servidor indicando el puerto. En Linux:
 

@@ -11,7 +11,7 @@ Preparación
 3. Conecta el Arduino por USB y carga StandardFirmata desde Arduino IDE:
    Archivo > Ejemplos > Firmata > StandardFirmata
 4. Ejecuta: npm start
-5. Abre http://localhost:3000 en el navegador.
+5. Abre http://127.0.0.1:8081 en el navegador.
 
 Si Johnny-Five no detecta el puerto automáticamente, define el puerto antes de iniciar:
   Linux:   ARDUINO_PORT=/dev/ttyACM0 npm start
